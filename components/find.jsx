@@ -27,9 +27,12 @@ export default function Find(){
 
     return(
         <>
-            <h1>Geração: {gen?.name}</h1>
+        <div>
+            <h1>Geração: {gen?.name ?? ""}</h1>
             <h3>Região: {gen?.main_region?.name ?? ""}</h3>
             <p>Jogo: {gen?.version_groups?.[0]?.name ?? ""}</p>
+        </div>
+           
 
             <div>
                 <label>Escolha Uma geração (em numeros romanos)</label> <br />
