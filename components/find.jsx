@@ -8,7 +8,8 @@ export default function Find(){
     //variaveis
     const [gen, setGen] = useState("");
     const [numr, setNumr] = useState("");
-    const [erro, setErro] = useState("");
+    const [erro, setErro] = useState(false);
+    const [mostrar, setMostrar] = useState(false);
     
 
     //pegar as informações da geração (vem da API)
@@ -16,10 +17,12 @@ export default function Find(){
         await P.getGenerationByName(`generation-` + numr)
         .then((result)=>{
             setGen(result);
-            setErro("");
+            setErro(false);
+            setMostrar(true);
         })
         .catch((err) =>{
-            setErro("Invalido");
+            setErro(true);
+            setMostrar(false);
             console.log(err);
         });
        
@@ -27,20 +30,52 @@ export default function Find(){
 
     return(
         <>
-        <div>
-            <h1>Geração: {gen?.name ?? ""}</h1>
-            <h3>Região: {gen?.main_region?.name ?? ""}</h3>
-            <p>Jogo: {gen?.version_groups?.[0]?.name ?? ""}</p>
-        </div>
-           
+            <div className='container'>
 
-            <div>
-                <label>Escolha Uma geração (em numeros romanos)</label> <br />
-                <input type="text" placeholder='Geração' required  onChange={event=>setNumr(event.target.value)} value={numr} /> <br />
-                <input type="button" value="Confirmar" onClick={getID} />
+                {/* Form */}
+                <div className='mb-3'>
+                    <label className='form-label'>Escolha Uma geração (em numeros romanos)</label> <br />
+                    <input type="text" placeholder='Geração' required  onChange={event=>setNumr(event.target.value)} value={numr} className='input-group-text form-control' />
+                    
+                </div>
+                <div className='mb-3'>
+                    <input type="button" value="Confirmar" onClick={getID} className='btn btn-primary' />
+                </div>
+
+                {/* Mostrar Informações */}
+                {mostrar ?(
+                    <div>
+                        <table className='table table-info'>
+                            <thead>
+                                <tr>
+                                    <th >Geração</th>
+                                    <th > Região</th>
+                                    <th >Jogo</th>
+                                    <th>Terceiro Jogo, Remake ou DLC</th>
+                                    <th>Espécies</th>
+                                </tr>
+                            </thead>    
+
+                            <tbody>
+                                <tr>
+                                    <td> {gen?.names?.[3]?.name ?? ""} </td>
+                                    <td> {gen?.main_region?.name ?? ""} </td>
+                                    <td> {gen?.version_groups?.[0]?.name ?? ""} </td>
+                                    <td> {gen?.version_groups?.[1]?.name ?? ""} </td>
+                                    <td> {gen?.pokemon_species.length ?? ""} </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                ):(<></>)}
+            
+
+                {/* Erro */}
+                {erro ?(
+                    <h1 className='bg-danger text-white p-2 text-center'>Invalido</h1>
+                ):(<></>)}
+                
             </div>
-
-            <h1>{erro}</h1>
         </>
     );
 
